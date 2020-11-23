@@ -111,6 +111,12 @@ func (EmployeeDaoImpl) GetStaffByUnit(unitId string) (data []pojo.PojoTempEmploy
 	sb.WriteString("WHERE cp.\"level\" < 3")
 	sb.WriteString("AND cu.id = ?")
 
+	// var listEmp []model.Employee
+	// g.
+	// 	Joins("JOIN ").
+	// 	Joins("JOIN cor_units cu ON cu.id = cor_employees.unit_id").Select("cu.id,Position.Id").Where("Level < 3 AND cu.id = ? ", unitId).Find(&listEmp)
+	// log.Print(listEmp)
+
 	rows, err := g.Raw(sb.String(), unitId).Rows()
 
 	listStaff := []pojo.PojoTempEmployee{}

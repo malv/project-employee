@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var tables = []interface{}{
@@ -26,7 +27,9 @@ const (
 
 func Conn() (*gorm.DB, error) {
 	pg := fmt.Sprintf("host= %v user=%v password=%v dbname=%v port=%v sslmode=%v", host, user, password, dbname, port, sslmode)
-	db, err := gorm.Open(postgres.Open(pg), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(pg), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 
 	if err != nil {
 		return nil, err
