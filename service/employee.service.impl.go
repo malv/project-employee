@@ -1,10 +1,13 @@
 package service
 
 import (
+	"log"
 	"project-employee/config"
 	"project-employee/dao"
 	"project-employee/model"
 	"project-employee/pojo"
+	pb "project-employee/proto/model"
+	"sync"
 )
 
 type EmployeeServiceImpl struct{}
@@ -31,12 +34,15 @@ func (EmployeeServiceImpl) DeleteEmployee(id string) (e error) {
 
 func (EmployeeServiceImpl) GetEmployees() (data []pojo.PojoGetEmployee, e error) {
 	defer config.CatchError(&e)
+	var wg sync.WaitGroup
 	result, err := employeeDao.GetEmployees()
 	if err == nil {
 		var listEmployees []pojo.PojoGetEmployee
 		for i := 0; i < len(result); i++ {
+			wg.Add(1)
 			pojoEmp := pojo.PojoGetEmployee{}
 			person, err := GetPersonById(result[i].PersonId)
+			log.Print(person)
 			if err == nil {
 				pojoEmp.Id = result[i].Id
 				pojoEmp.Nik = result[i].Nik
@@ -49,6 +55,7 @@ func (EmployeeServiceImpl) GetEmployees() (data []pojo.PojoGetEmployee, e error)
 				listEmployees = append(listEmployees, pojoEmp)
 			}
 		}
+		log.Print(listEmployees)
 		return listEmployees, nil
 	}
 	return data, err
@@ -170,4 +177,41 @@ func (EmployeeServiceImpl) validasiIdExist(data model.Employee) {
 		panic("Id not exist")
 	}
 
+}
+
+func (EmployeeServiceImpl) GetEmployeesWithToken(token string) (data []pojo.PojoGetEmployee, e error) {
+	defer config.CatchError(&e)
+	var wg sync.WaitGroup
+	result, err := employeeDao.GetEmployees()
+	if err == nil {
+		var listEmployees []pojo.PojoGetEmployee
+		for i := 0; i < len(result); i++ {
+			wg.Add(1)
+			pojoEmp := pojo.PojoGetEmployee{}
+			person, err := GetPersonByIdWithToken(result[i].PersonId, token)
+			log.Print(person)
+			if err == nil {
+				pojoEmp.Id = result[i].Id
+				pojoEmp.Nik = result[i].Nik
+				pojoEmp.Name = person["first_name"].(string)
+				if person["last_name"] != nil {
+					pojoEmp.Name = pojoEmp.Name + " " + person["last_name"].(string)
+				}
+				pojoEmp.Position = pojo.PojoPosition{Id: result[i].Position.Id, Name: result[i].Position.Name}
+				pojoEmp.Unit = pojo.PojoUnit{Id: result[i].Unit.Id, Name: result[i].Unit.Name}
+				listEmployees = append(listEmployees, pojoEmp)
+			}
+		}
+		return listEmployees, nil
+	}
+	return data, err
+}
+
+func (EmployeeServiceImpl) GetEmployeesFromProto() (data *pb.Employees, e error) {
+	defer config.CatchError(&e)
+	res, err := config.ClientEmployee.GetEmployees(config.CtxEmployee, &pb.Empty{Token: ReqToken})
+	if err != nil {
+		panic(err)
+	}
+	return res, nil
 }

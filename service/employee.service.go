@@ -3,6 +3,7 @@ package service
 import (
 	"project-employee/model"
 	"project-employee/pojo"
+	pb "project-employee/proto/model"
 )
 
 type EmployeeService interface {
@@ -14,4 +15,5 @@ type EmployeeService interface {
 	GetManager() ([]pojo.PojoGetEmployee, error)
 	GetStaffByUnit(unitId string) ([]pojo.PojoGetEmployee, error)
 	GetAllByUnit(unitId string) ([]pojo.PojoGetEmployee, error)
+	GetEmployeesFromProto() (*pb.Employees, error)
 }

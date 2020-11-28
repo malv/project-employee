@@ -70,10 +70,7 @@ func getEmployees(c echo.Context) (e error) {
 	result, err := employeeService.GetEmployees()
 
 	if err == nil {
-		if len(result) > 0 {
-			return res(c, result)
-		}
-		return resErr(c, errors.New("data not found"))
+		return res(c, result)
 	}
 	return resErr(c, err)
 }

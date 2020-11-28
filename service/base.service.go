@@ -71,3 +71,20 @@ func GetRequest(uri string) (bodyResp []byte, e error) {
 
 	return ioutil.ReadAll(resp.Body)
 }
+
+func GetRequestWithProto(uri string, token string) (bodyResp []byte, e error) {
+	var bearer = "Bearer " + token
+	defer config.CatchError(&e)
+	req, err := http.NewRequest("GET", uri, nil)
+	req.Header.Add("Authorization", bearer)
+	req.Header.Add("Content-Type", "application/json;charset=UTF-8")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error on response =>", err)
+	}
+	defer resp.Body.Close()
+
+	return ioutil.ReadAll(resp.Body)
+}
