@@ -1,0 +1,87 @@
+syntax = "proto3";
+package model;
+option go_package = "recruitment/proto/model";
+
+message Jobs {
+    string id = 1;
+    string code = 2;
+    string name = 3;
+    string description = 4;
+}
+message Job {
+    string code = 2;
+    string name = 3;
+    string description = 4;
+}
+message JobList {
+    repeated Jobs Job = 1;
+}
+
+message Response {
+     string code = 1;
+     string message =2;
+}
+
+message Empty{}
+
+message JobId{
+    string id = 1;
+}
+
+message Employee {
+    string Id = 1;
+    string Nik =2;
+    string Name = 3;
+}
+message AddEmployee {
+    string PersonId = 1;
+    string CompanyId = 2;
+    string UnitId = 3;
+    string PositionId = 4;
+    string Nik = 5;
+    string HiredDate = 6;
+}
+message Employees {
+    repeated Employee Employee = 1;
+}
+
+message Tokens{
+    string Token = 1;
+}
+message ResponseAddEmployee {
+    string Msg = 1;
+}
+
+message Competencies{
+    string Id = 1;
+    string code = 2;
+    string name = 3;
+}
+
+message CompId{
+    string Id = 1;
+}
+
+message CompetencyList{
+    repeated Competencies ListCompetency = 1;
+}
+
+service EmployeeService{
+    rpc GetEmployees(Tokens) returns(Employees);
+    rpc CreateEmployee(AddEmployee) returns(ResponseAddEmployee);
+}
+
+
+
+service JobService{
+    rpc GetAllJob(Empty) returns(JobList);
+    rpc AddJob(Job) returns (Response);
+    rpc GetByIdJob(JobId) returns(Jobs);
+}
+
+service CompetencyService{
+    rpc GetAllCompetency(Empty) returns (CompetencyList);
+    rpc DeleteJobById(JobId) returns (Response);
+    rpc GetCompetencyById(CompId) returns (Competencies);
+    rpc GetCompetencyByJobId(CompId) returns (CompetencyList);
+}

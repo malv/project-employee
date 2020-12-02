@@ -58,6 +58,17 @@ func (EmployeeDaoImpl) GetEmployeeById(id string) (data model.Employee, e error)
 	return model.Employee{}, result.Error
 }
 
+func (EmployeeDaoImpl) GetEmployeeByPerson(id string) (data model.Employee, e error) {
+	defer config.CatchError(&e)
+	employee := model.Employee{PersonId: id}
+	result := g.Preload("Company").Preload("Unit").Preload("Position").First(&employee)
+
+	if result.Error == nil {
+		return employee, nil
+	}
+	return model.Employee{}, result.Error
+}
+
 func (EmployeeDaoImpl) GetManager() (data []pojo.PojoTempEmployee, e error) {
 	defer config.CatchError(&e)
 	var sb strings.Builder

@@ -19,13 +19,13 @@ func main() {
 	}
 	defer conn.Close()
 	client = pb.NewEmployeeServiceClient(conn)
-	getEmployees()
+	// getEmployees()
 }
 
-func getEmployees() {
-	resp, err := client.GetEmployees(ctx, &pb.Empty{Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDU2MTA2OTEsInVzZXJuYW1lIjoiYWRtaW4yIn0.AYjwBx_D9BF-UXfWvFbIR-e9ZTNJneNtwreXhceLo1s"})
-	if err != nil {
-		panic(err)
-	}
-	log.Println(resp)
-}
+// func getEmployees() {
+// 	resp, err := client.GetEmployees(ctx, &pb.Empty{Token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDU2MTA2OTEsInVzZXJuYW1lIjoiYWRtaW4yIn0.AYjwBx_D9BF-UXfWvFbIR-e9ZTNJneNtwreXhceLo1s"})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	log.Println(resp)
+// }

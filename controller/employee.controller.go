@@ -6,6 +6,8 @@ import (
 	"project-employee/model"
 	"project-employee/service"
 
+	pb "project-employee/proto/model"
+
 	"github.com/labstack/echo"
 )
 
@@ -67,7 +69,8 @@ func deleteEmployee(c echo.Context) (e error) {
 func getEmployees(c echo.Context) (e error) {
 	defer config.CatchError(&e)
 
-	result, err := employeeService.GetEmployees()
+	// result, err := employeeService.GetEmployees()
+	result, err := config.ClientEmployee.GetEmployees(config.CtxEmployee, &pb.Tokens{Token: service.ReqToken})
 
 	if err == nil {
 		return res(c, result)

@@ -23,10 +23,11 @@ var companyService service.CompanyServiceImpl
 var positionService service.PositionServiceImpl
 var unitService service.UnitServiceImpl
 
-func (*server) GetEmployees(c context.Context, empty *pb.Empty) (data *pb.Employees, e error) {
+func (*server) GetEmployees(c context.Context, token *pb.Tokens) (data *pb.Employees, e error) {
 	var employees []*pb.Employee
-	result, err := employeeService.GetEmployeesWithToken(empty.Token)
-
+	log.Print("ada yg hit")
+	result, err := employeeService.GetEmployeesWithToken(token.Token)
+	log.Print("biar ketauan : ", result)
 	if err != nil {
 		return data, err
 	}
@@ -43,77 +44,77 @@ func (*server) GetEmployees(c context.Context, empty *pb.Empty) (data *pb.Employ
 	return &list, nil
 }
 
-func (*server) GetCompanies(c context.Context, empty *pb.Empty) (data *pb.Companies, e error) {
-	var companies []*pb.Company
-	result, err := companyService.GetCompanies()
+// func (*server) GetCompanies(c context.Context, empty *pb.Empty) (data *pb.Companies, e error) {
+// 	var companies []*pb.Company
+// 	result, err := companyService.GetCompanies()
 
-	if err != nil {
-		return data, err
-	}
+// 	if err != nil {
+// 		return data, err
+// 	}
 
-	for _, com := range result {
-		company := &pb.Company{
-			Id:               com.Id,
-			Code:             com.Code,
-			Name:             com.Name,
-			Description:      com.Description,
-			CompanyTaxNumber: com.CompanyTaxNumber,
-		}
-		companies = append(companies, company)
-	}
-	list := pb.Companies{Company: companies}
+// 	for _, com := range result {
+// 		company := &pb.Company{
+// 			Id:               com.Id,
+// 			Code:             com.Code,
+// 			Name:             com.Name,
+// 			Description:      com.Description,
+// 			CompanyTaxNumber: com.CompanyTaxNumber,
+// 		}
+// 		companies = append(companies, company)
+// 	}
+// 	list := pb.Companies{Company: companies}
 
-	return &list, nil
-}
+// 	return &list, nil
+// }
 
-func (*server) GetPositions(c context.Context, empty *pb.Empty) (data *pb.Positions, e error) {
-	var listPosition []*pb.Position
+// func (*server) GetPositions(c context.Context, empty *pb.Empty) (data *pb.Positions, e error) {
+// 	var listPosition []*pb.Position
 
-	result, err := positionService.GetPositions()
+// 	result, err := positionService.GetPositions()
 
-	if err != nil {
-		return data, err
-	}
+// 	if err != nil {
+// 		return data, err
+// 	}
 
-	for _, pos := range result {
-		position := &pb.Position{
-			Id:          pos.Id,
-			Code:        pos.Code,
-			Name:        pos.Name,
-			Description: pos.Description,
-			Level:       string(pos.Level),
-		}
-		listPosition = append(listPosition, position)
-	}
+// 	for _, pos := range result {
+// 		position := &pb.Position{
+// 			Id:          pos.Id,
+// 			Code:        pos.Code,
+// 			Name:        pos.Name,
+// 			Description: pos.Description,
+// 			Level:       string(pos.Level),
+// 		}
+// 		listPosition = append(listPosition, position)
+// 	}
 
-	positions := pb.Positions{Position: listPosition}
+// 	positions := pb.Positions{Position: listPosition}
 
-	return &positions, nil
-}
+// 	return &positions, nil
+// }
 
-func (*server) GetUnits(c context.Context, empty *pb.Empty) (data *pb.Units, e error) {
-	var listUnit []*pb.Unit
+// func (*server) GetUnits(c context.Context, empty *pb.Empty) (data *pb.Units, e error) {
+// 	var listUnit []*pb.Unit
 
-	result, err := unitService.GetUnits()
+// 	result, err := unitService.GetUnits()
 
-	if err != nil {
-		return data, err
-	}
+// 	if err != nil {
+// 		return data, err
+// 	}
 
-	for _, un := range result {
-		unit := &pb.Unit{
-			Id:   un.Id,
-			Code: un.Code,
-			Name: un.Name,
-		}
+// 	for _, un := range result {
+// 		unit := &pb.Unit{
+// 			Id:   un.Id,
+// 			Code: un.Code,
+// 			Name: un.Name,
+// 		}
 
-		listUnit = append(listUnit, unit)
-	}
+// 		listUnit = append(listUnit, unit)
+// 	}
 
-	units := pb.Units{Unit: listUnit}
+// 	units := pb.Units{Unit: listUnit}
 
-	return &units, nil
-}
+// 	return &units, nil
+// }
 
 func (*server) CreateEmployee(c context.Context, emp *pb.AddEmployee) (resp *pb.ResponseAddEmployee, e error) {
 
@@ -124,6 +125,7 @@ func (*server) CreateEmployee(c context.Context, emp *pb.AddEmployee) (resp *pb.
 		PositionId: emp.PositionId,
 		Nik:        emp.Nik,
 		HiredDate:  emp.HiredDate,
+		IsActive:   true,
 	}
 
 	err := employeeService.AddEmployee(&employee)

@@ -18,7 +18,7 @@ func main() {
 	dao.SetDao(g)
 	service.SetService(g)
 	config.Connected()
-	// config.ConnectedEmployee()
+	config.ConnectedEmployee()
 	e.Use(service.MiddlewareCredential)
 
 	controller.SetInit(e)

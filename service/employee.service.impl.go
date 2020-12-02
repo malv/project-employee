@@ -6,7 +6,6 @@ import (
 	"project-employee/dao"
 	"project-employee/model"
 	"project-employee/pojo"
-	pb "project-employee/proto/model"
 	"sync"
 )
 
@@ -18,6 +17,7 @@ var employeeDao dao.EmployeeDao = dao.EmployeeDaoImpl{}
 func (EmployeeServiceImpl) AddEmployee(data *model.Employee) (e error) {
 	defer config.CatchError(&e)
 	employeeServiceImpl.validasiIdNull(*data)
+	employeeServiceImpl.validasiBKIsExist(data)
 	return employeeDao.AddEmployee(data)
 }
 
@@ -179,6 +179,15 @@ func (EmployeeServiceImpl) validasiIdExist(data model.Employee) {
 
 }
 
+func (EmployeeServiceImpl) validasiBKIsExist(data *model.Employee) (e error) {
+	defer config.CatchError(&e)
+	_, err := employeeDao.GetEmployeeByPerson(data.PersonId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (EmployeeServiceImpl) GetEmployeesWithToken(token string) (data []pojo.PojoGetEmployee, e error) {
 	defer config.CatchError(&e)
 	var wg sync.WaitGroup
@@ -189,7 +198,6 @@ func (EmployeeServiceImpl) GetEmployeesWithToken(token string) (data []pojo.Pojo
 			wg.Add(1)
 			pojoEmp := pojo.PojoGetEmployee{}
 			person, err := GetPersonByIdWithToken(result[i].PersonId, token)
-			log.Print(person)
 			if err == nil {
 				pojoEmp.Id = result[i].Id
 				pojoEmp.Nik = result[i].Nik
@@ -207,11 +215,11 @@ func (EmployeeServiceImpl) GetEmployeesWithToken(token string) (data []pojo.Pojo
 	return data, err
 }
 
-func (EmployeeServiceImpl) GetEmployeesFromProto() (data *pb.Employees, e error) {
-	defer config.CatchError(&e)
-	res, err := config.ClientEmployee.GetEmployees(config.CtxEmployee, &pb.Empty{Token: ReqToken})
-	if err != nil {
-		panic(err)
-	}
-	return res, nil
-}
+// func (EmployeeServiceImpl) GetEmployeesFromProto() (data *pb.Employees, e error) {
+// 	defer config.CatchError(&e)
+// 	res, err := config.ClientEmployee.GetEmployees(config.CtxEmployee, &pb.Empty{Token: ReqToken})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	return res, nil
+// }

@@ -11,6 +11,7 @@ type EmployeeDao interface {
 	DeleteEmployee(id string) error
 	GetEmployees() ([]model.Employee, error)
 	GetEmployeeById(id string) (model.Employee, error)
+	GetEmployeeByPerson(id string) (model.Employee, error)
 	GetManager() ([]pojo.PojoTempEmployee, error)
 	GetStaffByUnit(unitId string) ([]pojo.PojoTempEmployee, error)
 	GetAllByUnit(unitId string) ([]pojo.PojoTempEmployee, error)
